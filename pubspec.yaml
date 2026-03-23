@@ -123,8 +123,16 @@ flutter:
       fonts:
         - asset: lib/assets/Mona_Sans/static/MonaSans-Medium.ttf
           weight: 500
+        - asset: lib/assets/Mona_Sans/static/MonaSans-SemiBold.ttf
+          weight: 600
         - asset: lib/assets/Mona_Sans/static/MonaSans-Bold.ttf
           weight: 700
+        - asset: lib/assets/Mona_Sans/static/MonaSans-ExtraBold.ttf
+          weight: 800
+    - family: Mona Sans SemiCondensed
+      fonts:
+        - asset: lib/assets/Mona_Sans copy/static/MonaSans_SemiCondensed-ExtraBold.ttf
+          weight: 800
 
 flutter_launcher_icons:
   ios: true

@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 import 'settings_page.dart';
+import '../data/languages.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -124,51 +125,50 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    final List<String> photoCards = [
+      'lib/assets/AUSTIN/Austin 1.jpg',
+      'lib/assets/AUSTIN/Austin 2.jpg',
+      'lib/assets/AUSTIN/Austin 3.jpg',
+      'lib/assets/AUSTIN/Austin 4.jpg',
+      'lib/assets/AUSTIN/Austin 5.jpg',
+    ];
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // Background image with gradient overlay
+          // White background
           Positioned.fill(
-            child: Stack(
-              children: [
-                // Background image
-                Positioned.fill(
-                  child: Image.asset(
-                    'lib/assets/homepage_logo1.jpg',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                  ),
-                ),
-                // White gradient overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white.withValues(alpha: 0.6),
-                          Colors.white.withValues(alpha: 0.92),
-                          Colors.white,
-                        ],
-                        stops: const [0.26, 0.34, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: Container(color: Colors.white),
+          ),
+          // Voyagr star icon - top left, behind content
+          Positioned(
+            top: -20,
+            left: -20,
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()..rotateZ(0.28),
+              child: Image.asset(
+                'lib/assets/voyagr_star_light_blue.png',
+                width: 165.24,
+                height: 221.58,
+              ),
             ),
           ),
-          // Content overlay
+          // Main content
           SafeArea(
+            bottom: false,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Settings icon in top right
+                // Settings button top right
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 16, top: 8),
+                    padding: const EdgeInsets.only(right: 16, top: 4),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -178,96 +178,389 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                       },
                       child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.9),
+                        width: 39,
+                        height: 39,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFCEDAF4),
                           shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                         child: const Icon(
                           Icons.settings,
                           color: Color(0xFF2E55C6),
-                          size: 24,
+                          size: 20,
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                // Camera icon with white stroke circle
-                GestureDetector(
-                  onTap: () {
-                    // TODO: Handle edit profile photo
-                  },
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFD3D3D3), // Grey background
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 3,
+                // "HEY YOU" header - stationary
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: const Text(
+                      'HEY YOU',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF2E55C6),
+                        fontSize: 96,
+                        fontFamily: 'Mona Sans SemiCondensed',
+                        fontWeight: FontWeight.w800,
+                        height: 0.95,
                       ),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: Color(0xFF2E55C6),
-                      size: 48,
                     ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                // "Edit Profile" text
-                const Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    fontFamily: 'Mona Sans',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                // Tab buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildTabButton('Profile'),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildTabButton('Safety'),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildTabButton('Preferences'),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Content area for selected tab
+                // Scrollable content below
                 Expanded(
-                  child: _selectedTab == 'Profile'
-                      ? _buildProfileTab()
-                      : _selectedTab == 'Preferences'
-                          ? _buildPreferencesTab()
-                          : _buildSafetyTab(),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 130),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Horizontal scrolling photo cards
+                        SizedBox(
+                  height: 233,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.only(left: 24, right: 24, bottom: 14),
+                    itemCount: photoCards.length + 1,
+                    itemBuilder: (context, index) {
+                      // Last item is the "ADD PHOTO" card
+                      if (index == photoCards.length) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: GestureDetector(
+                            onTap: () => _showImageSourceDialog(),
+                            child: Container(
+                              width: 175,
+                              height: 219,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFCEDAF4),
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    width: 2.50,
+                                    color: Color(0xFF2E55C6),
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                shadows: const [
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 6,
+                                    offset: Offset(4, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  // Star decoration
+                                  Positioned(
+                                    left: 55,
+                                    top: -5,
+                                    child: Transform(
+                                      transform: Matrix4.identity()..rotateZ(-0.12),
+                                      child: Image.asset(
+                                        'lib/assets/voyagr_star_blue.png',
+                                        width: 132,
+                                        height: 177,
+                                      ),
+                                    ),
+                                  ),
+                                  // "ADD PHOTO" text
+                                  const Positioned(
+                                    left: 12,
+                                    bottom: 12,
+                                    right: 12,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        'ADD PHOTO',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Color(0xFF2E55C6),
+                                          fontSize: 30,
+                                          fontFamily: 'Mona Sans SemiCondensed',
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Container(
+                          width: 175,
+                          height: 219,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: ShapeDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(photoCards[index]),
+                              fit: BoxFit.cover,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            shadows: const [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 6,
+                                offset: Offset(4, 4),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                  const SizedBox(height: 24),
+                  // BIO section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'BIO',
+                          style: TextStyle(
+                            color: Color(0xFF2E55C6),
+                            fontSize: 48,
+                            fontFamily: 'Mona Sans SemiCondensed',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: _bioController,
+                          maxLines: 5,
+                          style: const TextStyle(
+                            color: Color(0xFF2E55C6),
+                            fontSize: 20,
+                            fontFamily: 'Mona Sans',
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Tell us about yourself...',
+                            hintStyle: TextStyle(
+                              color: const Color(0xFF2E55C6).withValues(alpha: 0.4),
+                              fontSize: 20,
+                              fontFamily: 'Mona Sans',
+                              fontWeight: FontWeight.w600,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // INTERESTS section
+                        const Text(
+                          'INTERESTS',
+                          style: TextStyle(
+                            color: Color(0xFF2E55C6),
+                            fontSize: 48,
+                            fontFamily: 'Mona Sans SemiCondensed',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildSearchBox(_interestsSearchController),
+                        const SizedBox(height: 32),
+                        // TAGS section
+                        const Text(
+                          'TAGS',
+                          style: TextStyle(
+                            color: Color(0xFF2E55C6),
+                            fontSize: 48,
+                            fontFamily: 'Mona Sans SemiCondensed',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildSearchBox(_tagsSearchController),
+                        const SizedBox(height: 32),
+                        // LANGUAGES section
+                        const Text(
+                          'LANGUAGES',
+                          style: TextStyle(
+                            color: Color(0xFF2E55C6),
+                            fontSize: 48,
+                            fontFamily: 'Mona Sans SemiCondensed',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Selected language pills
+                        if (_selectedLanguages.isNotEmpty) ...[
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: _selectedLanguages.map((lang) {
+                              final isFirst = _selectedLanguages.indexOf(lang) == 0;
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                decoration: ShapeDecoration(
+                                  color: isFirst ? const Color(0xFFFAF5A1) : const Color(0xFF2E55C6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      lang.toUpperCase(),
+                                      style: TextStyle(
+                                        color: isFirst ? Colors.black : Colors.white,
+                                        fontSize: 20,
+                                        fontFamily: 'Mona Sans',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedLanguages.remove(lang);
+                                        });
+                                      },
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: isFirst ? Colors.black : Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                        _buildSearchBox(_languagesSearchController),
+                        // Language suggestions
+                        ValueListenableBuilder<TextEditingValue>(
+                          valueListenable: _languagesSearchController,
+                          builder: (context, value, child) {
+                            if (value.text.isEmpty) return const SizedBox.shrink();
+                            final query = value.text.toLowerCase();
+                            final matches = allLanguages
+                                .where((l) =>
+                                    l.toLowerCase().contains(query) &&
+                                    !_selectedLanguages.contains(l))
+                                .take(5)
+                                .toList();
+                            if (matches.isEmpty) return const SizedBox.shrink();
+                            return Container(
+                              margin: const EdgeInsets.only(top: 4, right: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x1A000000),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: matches.map((lang) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedLanguages.add(lang);
+                                        _languagesSearchController.clear();
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      child: Text(
+                                        lang,
+                                        style: const TextStyle(
+                                          color: Color(0xFF2E55C6),
+                                          fontSize: 18,
+                                          fontFamily: 'Mona Sans',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBox(TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10, bottom: 10),
+      child: Container(
+        height: 41,
+        decoration: BoxDecoration(
+          color: const Color(0x59D9D9D9),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x1A000000),
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 17),
+            const Icon(Icons.search, color: Color(0xFF2E55C6), size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: const TextStyle(
+                  color: Color(0xFF2E55C6),
+                  fontSize: 20,
+                  fontFamily: 'Mona Sans',
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(
+                    color: Color(0xFF2E55C6),
+                    fontSize: 20,
+                    fontFamily: 'Mona Sans',
+                    fontWeight: FontWeight.w600,
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 0),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'connect_page.dart';
@@ -180,20 +181,26 @@ class _HomePageState extends State<HomePage> {
             bottom: 30,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Container(
-                height: 78,
-                decoration: BoxDecoration(
-                  color: const Color(0x592E55C6),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(0, Icons.luggage, 'STAY'),
-                    _buildNavItem(1, Icons.people, 'CONNECT'),
-                    _buildNavItem(2, Icons.message, 'MESSAGE'),
-                    _buildNavItem(3, Icons.person, 'PROFILE'),
-                  ],
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  height: 78,
+                  decoration: BoxDecoration(
+                    color: const Color(0xBF2E55C6),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.15),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildNavItem(0, Icons.luggage, 'STAY'),
+                      _buildNavItem(1, Icons.people, 'CONNECT'),
+                      _buildNavItem(2, Icons.message, 'MESSAGE'),
+                      _buildNavItem(3, Icons.person, 'PROFILE'),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -226,7 +233,7 @@ class _HomePageState extends State<HomePage> {
             label,
             style: TextStyle(
               color: isSelected ? const Color(0xFFFAF5A1) : const Color(0xFFE0E0E0),
-              fontSize: 11,
+              fontSize: 15,
               fontFamily: 'Mona Sans',
               fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
             ),

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:developer' as developer;
@@ -493,202 +494,194 @@ class _ConnectPageState extends State<ConnectPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    // Static placeholder profiles using Austin images
+    final List<Map<String, String>> placeholderCards = [
+      {'name': 'AUSTIN', 'image': 'lib/assets/AUSTIN/Austin 1.jpg'},
+      {'name': 'ANDREI', 'image': 'lib/assets/AUSTIN/Austin 2.jpg'},
+      {'name': 'TAYSON', 'image': 'lib/assets/AUSTIN/Austin 3.jpg'},
+      {'name': 'NICK', 'image': 'lib/assets/AUSTIN/Austin 4.jpg'},
+      {'name': 'ALDRIC', 'image': 'lib/assets/AUSTIN/Austin 5.jpg'},
+      {'name': 'BRODY', 'image': 'lib/assets/AUSTIN/Austin 6.jpg'},
+    ];
+
     return Stack(
-      children: [
-        // Background image with gradient overlay
-        Positioned.fill(
-          child: Stack(
-            children: [
-              // Background image
-              Positioned.fill(
-                child: Image.asset(
-                  'lib/assets/homepage_logo1.jpg',
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
-              ),
-              // White gradient overlay
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.6),  // 60% opacity at 26%
-                        Colors.white.withValues(alpha: 0.92), // 92% opacity at 34%
-                        Colors.white,                          // 100% opacity at 100%
-                      ],
-                      stops: const [0.26, 0.34, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+        clipBehavior: Clip.none,
+        children: [
+          // White background
+          Positioned.fill(
+            child: Container(color: Colors.white),
           ),
-        ),
-        // Trip selector positioned at top with safe area padding
+          // Voyagr star icon - top right, behind content
           Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
-            left: 24,
-            right: 24,
-            child: GestureDetector(
-              onTap: () => _showTripPicker(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2E55C6),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
-                  child: Text(
-                    _selectedTrip != null
-                        ? '✈️ ${_selectedTrip!.city} | ${_selectedTrip!.getDateDisplay()}'
-                        : '✈️ Search for a city',
-                    style: const TextStyle(
-                      fontFamily: 'Mona Sans',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+            top: 0,
+            right: 0,
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..translate(50.0, 0.0)
+                ..rotateZ(-0.18),
+              child: Image.asset(
+                'lib/assets/voyagr_star_light_blue.png',
+                width: 148.81,
+                height: 199.54,
+              ),
+            ),
+          ),
+          // Main content
+          SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                // "CONNECT" header
+                GestureDetector(
+                  onTap: () => _showTripPicker(context),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: const Text(
+                        'CONNECT',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF2E55C6),
+                          fontSize: 96,
+                          fontFamily: 'Mona Sans SemiCondensed',
+                          fontWeight: FontWeight.w800,
+                          height: 0.95,
+                        ),
+                      ),
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
+                ),
+                const SizedBox(height: 12),
+            // Scrollable grid of profile cards
+            Expanded(
+              child: _isLoadingProfiles
+                  ? Center(
+                      child: Lottie.asset(
+                        'lib/assets/VOYAGR STAR YELLOW.json',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: GridView.builder(
+                        padding: const EdgeInsets.only(bottom: 130),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 175 / 219,
+                        ),
+                        itemCount: placeholderCards.length,
+                        itemBuilder: (context, index) {
+                          final card = placeholderCards[index];
+                          return _buildProfileCard(
+                            name: card['name']!,
+                            imagePath: card['image']!,
+                          );
+                        },
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+        ],
+    );
+  }
+
+  Widget _buildProfileCard({required String name, required String imagePath}) {
+    return GestureDetector(
+      onTap: () {
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: true,
+          barrierLabel: 'Profile',
+          barrierColor: Colors.transparent,
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  color: Colors.white.withValues(alpha: 0.10),
+                ),
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        image: DecorationImage(
+          image: AssetImage(imagePath),
+          fit: BoxFit.cover,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        shadows: const [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 6,
+            offset: Offset(4, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Blue banner behind name (slightly rotated)
+          Positioned(
+            left: 10,
+            bottom: 8,
+            child: Transform(
+              transform: Matrix4.identity()..rotateZ(-0.05),
+              child: Container(
+                width: name.length * 16.0 + 16,
+                height: 29,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF2E55C6),
                 ),
               ),
             ),
           ),
-          // Card positioned below trip selector with equal spacing (safe area + padding + selector height + spacing)
+          // Decorative star at end of banner
           Positioned(
-            top: MediaQuery.of(context).padding.top + 16 + 52 + 16,
-            bottom: 120,
-            left: 20,
-            right: 20,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width - 40,
-              child: _isLoadingProfiles
-                    ? Center(
-                        child: Lottie.asset(
-                          'lib/assets/VOYAGR STAR YELLOW.json',
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    : _selectedTrip == null
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.flight_takeoff,
-                                  size: 64,
-                                  color: const Color(0xFF2E55C6).withValues(alpha: 0.3),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Select a trip to find matches',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: const Color(0xFF2E55C6).withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : _profiles.isEmpty
-                            ? Center(
-                                child: Text(
-                                  'No matches found for this trip',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: const Color(0xFF2E55C6).withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              )
-                            : _currentCardIndex >= _profiles.length
-                                ? Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(30),
-                                        border: Border.all(
-                                          color: const Color(0xFF2E55C6),
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.favorite_border,
-                                            size: 80,
-                                            color: const Color(0xFF2E55C6).withValues(alpha: 0.5),
-                                          ),
-                                          const SizedBox(height: 24),
-                                          Text(
-                                            'No more connections',
-                                            style: TextStyle(
-                                              fontFamily: 'Mona Sans',
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: const Color(0xFF2E55C6).withValues(alpha: 0.7),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                : GestureDetector(
-                                    onPanStart: (details) {
-                                      setState(() {
-                                        _isDragging = true;
-                                      });
-                                    },
-                                    onPanUpdate: (details) {
-                                      setState(() {
-                                        _dragX += details.delta.dx;
-                                        _dragY += details.delta.dy;
-                                        _angle = _dragX * 0.001;
-                                      });
-                                    },
-                                    onPanEnd: (details) {
-                                      if (_dragX.abs() > 100) {
-                                        // Swipe threshold reached
-                                        final isRightSwipe = _dragX > 0;
-                                        _handleSwipeComplete(isRightSwipe);
-                                      } else {
-                                        // Reset card position
-                                        setState(() {
-                                          _dragX = 0;
-                                          _dragY = 0;
-                                          _angle = 0;
-                                          _isDragging = false;
-                                        });
-                                      }
-                                    },
-                                    child: SwipeCard(
-                                      profile: _profiles[_currentCardIndex],
-                                      currentPhotoIndex: _currentPhotoIndex,
-                                      onPhotoTap: (isRight) {
-                                        final totalPages = SwipeCard.getTotalPages(
-                                          _profiles[_currentCardIndex],
-                                        );
-                                        setState(() {
-                                          if (isRight && _currentPhotoIndex < totalPages - 1) {
-                                            _currentPhotoIndex++;
-                                          } else if (!isRight && _currentPhotoIndex > 0) {
-                                            _currentPhotoIndex--;
-                                          }
-                                        });
-                                      },
-                                      dragX: _dragX,
-                                      dragY: _dragY,
-                                      angle: _angle,
-                                    ),
-                                  ),
+            left: 10 + name.length * 16.0 + 8,
+            bottom: 10,
+            child: Image.asset(
+              'lib/assets/star_marker_64.png',
+              width: 25,
+              height: 34,
+              fit: BoxFit.contain,
+            ),
+          ),
+          // Name text on the banner
+          Positioned(
+            left: 16,
+            bottom: 10,
+            child: Transform(
+              transform: Matrix4.identity()..rotateZ(-0.05),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontFamily: 'Mona Sans',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
           ),
         ],
-      );
+      ),
+      ),
+    );
   }
 
   Widget _buildProfileImage(String imagePath) {
