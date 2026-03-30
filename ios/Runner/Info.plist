@@ -47,6 +47,10 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Voyagr needs camera access to scan your ID and take a selfie for identity verification.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Voyagr needs photo library access to select photos for your profile.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
