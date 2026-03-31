@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'signup_birthday_page.dart';
 
 class SignUpPronounsPage extends StatefulWidget {
+  final String phone;
   final String email;
   final String name;
 
   const SignUpPronounsPage({
     super.key,
+    required this.phone,
     required this.email,
     required this.name,
   });
@@ -61,6 +63,7 @@ class _SignUpPronounsPageState extends State<SignUpPronounsPage> {
       context,
       MaterialPageRoute(
         builder: (context) => SignUpBirthdayPage(
+          phone: widget.phone,
           email: widget.email,
           name: widget.name,
           pronouns: _pronounValue,

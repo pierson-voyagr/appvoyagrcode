@@ -121,14 +121,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
-  complycube:
-    dependency: "direct main"
-    description:
-      name: complycube
-      sha256: "5028c0735c129ea7572d4e128f88bcb5fd9cd29426efb7a616f768fa7f107aca"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.9"
   cross_file:
     dependency: transitive
     description:

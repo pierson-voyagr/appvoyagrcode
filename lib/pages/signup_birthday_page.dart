@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'signup_hostel_code_page.dart';
 
 class SignUpBirthdayPage extends StatefulWidget {
+  final String phone;
   final String email;
   final String name;
   final String pronouns;
 
   const SignUpBirthdayPage({
     super.key,
+    required this.phone,
     required this.email,
     required this.name,
     required this.pronouns,
@@ -51,48 +53,39 @@ class _SignUpBirthdayPageState extends State<SignUpBirthdayPage> {
       _ddController.text.length == 2 &&
       _yyyyController.text.length == 4;
 
-  bool _isUnder18() {
-    final month = int.tryParse(_mmController.text);
-    final day = int.tryParse(_ddController.text);
-    final year = int.tryParse(_yyyyController.text);
-    if (month == null || day == null || year == null) return true;
-    if (month < 1 || month > 12 || day < 1 || day > 31) return true;
-
-    try {
-      final birthday = DateTime(year, month, day);
-      final now = DateTime.now();
-      var age = now.year - birthday.year;
-      if (now.month < birthday.month ||
-          (now.month == birthday.month && now.day < birthday.day)) {
-        age--;
-      }
-      return age < 18;
-    } catch (_) {
-      return true;
-    }
-  }
-
   void _onNext() {
     if (!_canContinue) return;
 
-    if (_isUnder18()) {
-      setState(() {
-        _errorText = 'You must be 18 or older to sign up.';
-      });
+    final month = int.tryParse(_mmController.text);
+    final day = int.tryParse(_ddController.text);
+    final year = int.tryParse(_yyyyController.text);
+
+    if (month == null || day == null || year == null ||
+        month < 1 || month > 12 || day < 1 || day > 31 || year < 1900) {
+      setState(() => _errorText = 'Please enter a valid date.');
+      return;
+    }
+
+    final birthday = DateTime(year, month, day);
+    final now = DateTime.now();
+    var age = now.year - birthday.year;
+    if (now.month < birthday.month ||
+        (now.month == birthday.month && now.day < birthday.day)) {
+      age--;
+    }
+
+    if (age < 18) {
+      setState(() => _errorText = 'You must be 18 or older to sign up.');
       return;
     }
 
     setState(() => _errorText = null);
 
-    final month = int.parse(_mmController.text);
-    final day = int.parse(_ddController.text);
-    final year = int.parse(_yyyyController.text);
-    final birthday = DateTime(year, month, day);
-
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SignUpHostelCodePage(
+          phone: widget.phone,
           email: widget.email,
           name: widget.name,
           pronouns: widget.pronouns,
@@ -251,7 +244,7 @@ class _SignUpBirthdayPageState extends State<SignUpBirthdayPage> {
                             ),
                           ),
                           SizedBox(
-                            width: 65,
+                            width: 80,
                             child: TextField(
                               controller: _yyyyController,
                               focusNode: _yyyyFocus,

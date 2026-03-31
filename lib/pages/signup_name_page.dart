@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'signup_pronouns_page.dart';
 
 class SignUpNamePage extends StatefulWidget {
+  final String phone;
   final String email;
 
-  const SignUpNamePage({super.key, required this.email});
+  const SignUpNamePage({super.key, required this.phone, required this.email});
 
   @override
   State<SignUpNamePage> createState() => _SignUpNamePageState();
@@ -33,6 +34,7 @@ class _SignUpNamePageState extends State<SignUpNamePage> {
       context,
       MaterialPageRoute(
         builder: (context) => SignUpPronounsPage(
+          phone: widget.phone,
           email: widget.email,
           name: _nameController.text.trim(),
         ),

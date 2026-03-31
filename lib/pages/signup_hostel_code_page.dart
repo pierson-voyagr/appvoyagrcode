@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'signup_pictures_page.dart';
 
 class SignUpHostelCodePage extends StatefulWidget {
+  final String phone;
   final String email;
   final String name;
   final String pronouns;
@@ -10,6 +11,7 @@ class SignUpHostelCodePage extends StatefulWidget {
 
   const SignUpHostelCodePage({
     super.key,
+    required this.phone,
     required this.email,
     required this.name,
     required this.pronouns,
@@ -58,6 +60,7 @@ class _SignUpHostelCodePageState extends State<SignUpHostelCodePage> {
       context,
       MaterialPageRoute(
         builder: (context) => SignUpPicturesPage(
+          phone: widget.phone,
           email: widget.email,
           name: widget.name,
           pronouns: widget.pronouns,

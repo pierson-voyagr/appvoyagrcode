@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'signup_name_page.dart';
 
 class SignUpEmailPage extends StatefulWidget {
-  const SignUpEmailPage({super.key});
+  final String phone;
+
+  const SignUpEmailPage({super.key, required this.phone});
 
   @override
   State<SignUpEmailPage> createState() => _SignUpEmailPageState();
@@ -25,7 +27,8 @@ class _SignUpEmailPageState extends State<SignUpEmailPage> {
 
   bool get _canContinue {
     final email = _emailController.text.trim();
-    return email.contains('@') && email.contains('.');
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    return emailRegex.hasMatch(email);
   }
 
   void _onNext() {
@@ -34,6 +37,7 @@ class _SignUpEmailPageState extends State<SignUpEmailPage> {
       context,
       MaterialPageRoute(
         builder: (context) => SignUpNamePage(
+          phone: widget.phone,
           email: _emailController.text.trim(),
         ),
       ),

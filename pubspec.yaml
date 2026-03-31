@@ -38,7 +38,7 @@ dependencies:
   # Supabase
   supabase_flutter: ^2.8.0
   google_sign_in: ^6.2.2
-  complycube: ^0.0.9
+  # complycube: ^0.0.9  # Removed - using ID Analyzer instead
   lottie: ^3.1.0
   image_picker: ^1.1.2
   image_cropper: ^8.0.2

@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'verification_id_page.dart';
+import 'home_page.dart';
 
-class SignUpVerificationPage extends StatelessWidget {
+class SignUpVerificationPage extends StatefulWidget {
+  final String phone;
   final String email;
   final String name;
   final String pronouns;
@@ -12,6 +15,7 @@ class SignUpVerificationPage extends StatelessWidget {
 
   const SignUpVerificationPage({
     super.key,
+    required this.phone,
     required this.email,
     required this.name,
     required this.pronouns,
@@ -19,6 +23,65 @@ class SignUpVerificationPage extends StatelessWidget {
     required this.hostelCode,
     required this.photos,
   });
+
+  @override
+  State<SignUpVerificationPage> createState() => _SignUpVerificationPageState();
+}
+
+class _SignUpVerificationPageState extends State<SignUpVerificationPage> {
+  bool _isSaving = false;
+
+  Future<void> _saveUserAndNavigateHome() async {
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) throw Exception('Not authenticated');
+
+      // Upload photos to Supabase Storage
+      final photoUrls = <String>[];
+      for (int i = 0; i < widget.photos.length; i++) {
+        final photo = widget.photos[i];
+        if (photo == null) continue;
+
+        final fileName = '${user.id}/profile_$i.jpg';
+        await Supabase.instance.client.storage
+            .from('profile-photos')
+            .upload(fileName, photo, fileOptions: const FileOptions(upsert: true));
+
+        final url = Supabase.instance.client.storage
+            .from('profile-photos')
+            .getPublicUrl(fileName);
+        photoUrls.add(url);
+      }
+
+      // Save user profile to Supabase
+      await Supabase.instance.client.from('users').upsert({
+        'id': user.id,
+        'name': widget.name,
+        'email': widget.email,
+        'birthday': widget.birthday.toIso8601String(),
+        'is_verified': false,
+        'verification_status': 'pending',
+      });
+
+      if (!mounted) return;
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save profile: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +193,12 @@ class SignUpVerificationPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => VerificationIdPage(
-                                email: email,
-                                name: name,
-                                pronouns: pronouns,
-                                birthday: birthday,
-                                hostelCode: hostelCode,
-                                photos: photos,
+                                email: widget.email,
+                                name: widget.name,
+                                pronouns: widget.pronouns,
+                                birthday: widget.birthday,
+                                hostelCode: widget.hostelCode,
+                                photos: widget.photos,
                               ),
                             ),
                           );
@@ -156,7 +219,29 @@ class SignUpVerificationPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: _isSaving ? null : _saveUserAndNavigateHome,
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF2E55C6),
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Text(
+                          'Skip for now',
+                          style: TextStyle(
+                            color: Color(0xFF2E55C6),
+                            fontSize: 18,
+                            fontFamily: 'Mona Sans',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 40),
               ],
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'signup_verification_page.dart';
 
 class SignUpPicturesPage extends StatefulWidget {
+  final String phone;
   final String email;
   final String name;
   final String pronouns;
@@ -12,6 +13,7 @@ class SignUpPicturesPage extends StatefulWidget {
 
   const SignUpPicturesPage({
     super.key,
+    required this.phone,
     required this.email,
     required this.name,
     required this.pronouns,
@@ -49,6 +51,7 @@ class _SignUpPicturesPageState extends State<SignUpPicturesPage> {
       context,
       MaterialPageRoute(
         builder: (context) => SignUpVerificationPage(
+          phone: widget.phone,
           email: widget.email,
           name: widget.name,
           pronouns: widget.pronouns,

@@ -65,7 +65,9 @@ class _SignUpCodePageState extends State<SignUpCodePage> {
       if (!mounted) return;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const SignUpEmailPage()),
+        MaterialPageRoute(
+          builder: (context) => SignUpEmailPage(phone: _fullPhone),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
