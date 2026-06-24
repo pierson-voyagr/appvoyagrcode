@@ -1,0 +1,4 @@
+Wyatt[[:space:]]Photos/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+Wyatt[[:space:]]Photos/**/*.png filter=lfs diff=lfs merge=lfs -text
+Wyatt[[:space:]]Photos/*.jpg filter=lfs diff=lfs merge=lfs -text
+Wyatt[[:space:]]Photos/*.png filter=lfs diff=lfs merge=lfs -text
